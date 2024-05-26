@@ -1,6 +1,0 @@
-y_pred_rf = rf_classifier.predict(X_test)
-y_pred_svm = svm_classifier.predict(X_test)
-y_pred_lda = lda_classifier.predict(X_test)
-y_pred_knn = knn_classifier.predict(X_test)
-
-avg_accuracy_lda = accuracy_score(y_test, y_pred_rf)
