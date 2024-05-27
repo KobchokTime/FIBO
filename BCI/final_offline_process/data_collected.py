@@ -15,13 +15,15 @@ from sklearn.metrics import classification_report
 from sklearn.svm import SVC 
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 from datetime import datetime
+import csv
+from datetime import datetime, timedelta
+import os
 
 def calculate_frequency(signal):
-    # Count the number of signal changes
+    # Calculate the total frequency
     signal_changes = 0
     previous_signal = None
     
-    # Iterate over the signal list
     for i in range(1, len(signal)):
         current_signal, current_time = signal[i]
         previous_signal, previous_time = signal[i-1]
@@ -29,28 +31,53 @@ def calculate_frequency(signal):
             if previous_signal == 1 and current_signal == 0:
                 signal_changes += 1
     
-    # Calculate the total time duration
     start_time = datetime.strptime(signal[0][1], '%Y-%m-%d %H:%M:%S.%f')
     end_time = datetime.strptime(signal[-1][1], '%Y-%m-%d %H:%M:%S.%f')
     total_duration = (end_time - start_time).total_seconds()
+    total_frequency = signal_changes / total_duration if total_duration > 0 else 0
     
-    # Calculate frequency
-    frequency = signal_changes / total_duration
+    # Calculate frequency per second and append to CSV
+    per_second_changes = {}
+    for i in range(1, len(signal)):
+        current_signal, current_time = signal[i]
+        previous_signal, previous_time = signal[i-1]
+        current_time = datetime.strptime(current_time, '%Y-%m-%d %H:%M:%S.%f')
+        previous_time = datetime.strptime(previous_time, '%Y-%m-%d %H:%M:%S.%f')
+        if previous_signal == 1 and current_signal == 0:
+            second = current_time.replace(microsecond=0)
+            if second not in per_second_changes:
+                per_second_changes[second] = 0
+            per_second_changes[second] += 1
     
-    return frequency
+    file_exists = os.path.isfile('frequency_per_second.csv')
+    with open('frequency_per_second.csv', 'a', newline='') as csvfile:
+        fieldnames = ['Time', 'Frequency']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        
+        # Write the header only if the file does not exist
+        if not file_exists:
+            writer.writeheader()
+        
+        current_time = start_time.replace(microsecond=0)
+        while current_time <= end_time:
+            frequency = per_second_changes.get(current_time, 0)
+            writer.writerow({'Time': current_time.strftime('%Y-%m-%d %H:%M:%S'), 'Frequency': f"{frequency:.2f}"})
+            current_time += timedelta(seconds=1)
+    
+    return round(total_frequency, 2)
 
 class SSVEP(object):
-   def __init__(self, mywin= visual.Window([1200, 800], fullscr=False, monitor='testMonitor',units='deg')):
+   def __init__(self, mywin= visual.Window([1500, 800], fullscr=False, monitor='testMonitor',units='deg')):
 
       self.mywin = mywin
       self.pattern1 = visual.GratingStim(win=self.mywin, name='pattern1',units='cm', 
                         tex=None, mask=None,
-                        ori=0, pos=[0, 0], size=60, sf=1, phase=0.0,
+                        ori=0, pos=[0, 0], size=20, sf=1, phase=0.0,
                         color=[1,1,1], colorSpace='rgb', opacity=1, 
                         texRes=256, interpolate=True, depth=-1.0)
       self.pattern2 = visual.GratingStim(win=self.mywin, name='pattern2',units='cm', 
                         tex=None, mask=None,
-                        ori=0, pos=[0, 0], size=60, sf=1, phase=0,
+                        ori=0, pos=[0, 0], size=20, sf=1, phase=0,
                         color=[-1,-1,-1], colorSpace='rgb', opacity=1,
                         texRes=256, interpolate=True, depth=-2.0)
       
@@ -131,12 +158,13 @@ class SSVEP(object):
         core.quit()
 
    def start(self):
-        num_trial = 1
+        num_trial = 10
         c = 0
         block_dur = 30
         while self.refresh_rate is None:
                 self.refresh_rate = self.mywin.getActualFrameRate()
                 pass
+        # self.refresh_rate = 120
         print(self.refresh_rate)
         while True:
             Trialclock = core.Clock()
@@ -150,7 +178,7 @@ class SSVEP(object):
             i = 0
             ratio = 1
             indices = np.arange(0,self.refresh_rate/ratio) 
-            fre_fix1 = self.frequency_cal(6,self.refresh_rate/ratio,indices)
+            fre_fix1 = self.frequency_cal(20,self.refresh_rate/ratio,indices)
 
             fre_fix = [fre_fix1]
             self.fixation.setAutoDraw(True)
