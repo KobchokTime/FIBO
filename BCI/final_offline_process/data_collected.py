@@ -67,7 +67,7 @@ def calculate_frequency(signal):
     return round(total_frequency, 2)
 
 class SSVEP(object):
-   def __init__(self, mywin= visual.Window([1500, 800], fullscr=False, monitor='testMonitor',units='deg')):
+   def __init__(self, mywin= visual.Window([1920, 1080], fullscr=False, monitor='testMonitor',units='deg')):
 
       self.mywin = mywin
       self.pattern1 = visual.GratingStim(win=self.mywin, name='pattern1',units='cm', 
@@ -160,7 +160,7 @@ class SSVEP(object):
    def start(self):
         num_trial = 10
         c = 0
-        block_dur = 30
+        block_dur = 6
         while self.refresh_rate is None:
                 self.refresh_rate = self.mywin.getActualFrameRate()
                 pass
@@ -171,7 +171,7 @@ class SSVEP(object):
             self.text.setAutoDraw(True)
             self.mywin.flip()
             while True:
-                if Trialclock.getTime() >= 5:
+                if Trialclock.getTime() >= 1:
                     break
             self.text.setAutoDraw(False)
             self.mywin.flip()
@@ -210,7 +210,7 @@ class SSVEP(object):
 
             self.mywin.flip()
             while True:
-                if Trialclock.getTime() >= 5:
+                if Trialclock.getTime() >= 1:
                     break
             self.text_trial.setAutoDraw(False)
             self.fixation.setAutoDraw(False) 
