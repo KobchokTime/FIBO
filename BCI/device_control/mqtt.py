@@ -38,6 +38,5 @@ try:
 except KeyboardInterrupt:
     print("Exiting...")
 
-# Stop the loop and disconnect from the broker
 client.loop_stop()
 client.disconnect()
