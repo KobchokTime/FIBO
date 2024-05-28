@@ -1,20 +1,16 @@
 import paho.mqtt.client as mqtt
 import time
 
-# Define the MQTT broker address and port
 broker_address = "192.168.1.108"
 broker_port = 1883
 topic_pub = "cmnd/tasmota_01/Power"
 topic_sub = "bci/freq"
 
-# Callback function to handle incoming messages
 def on_message(client, userdata, message):
     print(f"Received message: {message.payload.decode()} on topic {message.topic}")
 
-# Create a new MQTT client instance
 client = mqtt.Client()
 
-# Attach the on_message callback function
 client.on_message = on_message
 
 client.connect(broker_address, broker_port)
