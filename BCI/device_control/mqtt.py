@@ -17,16 +17,22 @@ client = mqtt.Client()
 # Attach the on_message callback function
 client.on_message = on_message
 
-# Connect to the broker
 client.connect(broker_address, broker_port)
 
-# Subscribe to the topic
 client.subscribe(topic_sub)
 
-# Start the loop to process received messages
+# Start the loop
 client.loop_start()
 
 # Publish messages in a loop
+# try:
+#     while True:
+#         message = (input(str("")))
+#         client.publish(topic_pub, message)
+#         print(f"Published message: {message}")
+#         time.sleep(5)  # Publish a message every 5 seconds
+# except KeyboardInterrupt:
+#     print("Exiting...")
 try:
     while True:
         message = (input(str("")))
