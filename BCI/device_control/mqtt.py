@@ -7,7 +7,16 @@ topic_pub = "cmnd/tasmota_01/Power"
 topic_sub = "bci/freq"
 
 def on_message(client, userdata, message):
-    print(f"Received message: {message.payload.decode()} on topic {message.topic}")
+    received_message = message.payload.decode()
+    print(f"Received message: {received_message} on topic {message.topic}")
+    if received_message == "20":
+        response_message = "on"
+        client.publish(topic_pub, response_message)
+        print(f"Published message: {response_message} to topic {topic_pub}")
+    if received_message == "6":
+        response_message = "off"
+        client.publish(topic_pub, response_message)
+        print(f"Published message: {response_message} to topic {topic_pub}")
 
 client = mqtt.Client()
 
@@ -31,10 +40,8 @@ client.loop_start()
 #     print("Exiting...")
 try:
     while True:
-        message = (input(str("")))
-        client.publish(topic_pub, message)
-        print(f"Published message: {message}")
-        time.sleep(5)  # Publish a message every 5 seconds
+        time.sleep(1)
+        
 except KeyboardInterrupt:
     print("Exiting...")
 
