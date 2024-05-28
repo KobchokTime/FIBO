@@ -8,6 +8,15 @@ from joblib import load
 import numpy as np
 from datetime import datetime
 from keras.models import load_model
+import paho.mqtt.client as mqtt
+
+broker_address = "192.168.1.108"
+broker_port = 1883
+topic_pub = "bci/freq"
+
+client = mqtt.Client()
+client.connect(broker_address, broker_port, 60)
+client.loop_start()
 
 class EEGReceiver:
     def __init__(self):
@@ -66,16 +75,17 @@ class EEGReceiver:
                     self.start_time = None
 
     def process_data(self):
-        rf_model = load('../model_FFT/best_rf_classifier.joblib')
-        svm_model = load('../model_FFT/best_svm_classifier.joblib')
-        lda_model = load('../model_FFT/best_lda_classifier.joblib')
-        knn_model = load('../model_FFT/best_knn_classifier.joblib')
+        rf_model = load('../model_FFT/best_rf_classifier_youtube.joblib')
+        svm_model = load('../model_FFT/best_svm_classifier_youtube.joblib')
+        lda_model = load('../model_FFT/best_lda_classifier_youtube.joblib')
+        knn_model = load('../model_FFT/best_knn_classifier_youtube.joblib')
 
-        ann_model = load_model("../model_FFT/ann_model.h5")
-        cnn_model = load_model("../model_FFT/cnn_model.h5")
-        lstm_model = load_model("../model_FFT/lstm_model.h5")
-        cnn_scaler = load("../model_FFT/cnn_scaler.pkl")
-        lstm_scaler = load("../model_FFT/lstm_scaler.pkl")
+        ann_model = load_model("../model_FFT/ann_model_youtube.h5")
+        cnn_model = load_model("../model_FFT/cnn_model_youtube.h5")
+        lstm_model = load_model("../model_FFT/lstm_model_youtube.h5")
+        cnn_scaler = load("../model_FFT/cnn_scaler_youtube.pkl")
+        lstm_scaler = load("../model_FFT/lstm_scaler_youtube.pkl")
+        # message = (input(str("")))
         while True:
             if self.ready_for_processing and not self.data_queue.empty():
                 data = self.data_queue.get()
@@ -162,6 +172,10 @@ class EEGReceiver:
                 print(f'pre_ann => {y_pred_ann}')
                 print(f'pre_cnn => {y_pred_cnn}')
                 print(f'pre_lstm => {y_pred_lstm}')
+                if y_pred_cnn == 0:
+                    client.publish(topic_pub, "6")
+                elif y_pred_cnn == 1:
+                    client.publish(topic_pub, "20")
 
                 print(f'Time taken for ANN prediction: {time_ann} seconds')
                 print(f'Time taken for CNN prediction: {time_cnn} seconds')
@@ -178,7 +192,7 @@ processing_thread = threading.Thread(target=receiver.process_data, daemon=True)
 processing_thread.start()
 
 # ตั้งค่าที่อยู่ IP และพอร์ต
-server_ip = '10.63.5.92'  # ฟังจากทุก IP ที่เชื่อมต่อกับเครื่องนี้
+server_ip = '192.168.1.110'  # ฟังจากทุก IP ที่เชื่อมต่อกับเครื่องนี้
 server_port = 6000
 
 # สร้าง socket object

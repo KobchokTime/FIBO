@@ -207,7 +207,7 @@ class SSVEP(object):
             self.stop()
 
 # ตั้งค่าที่อยู่ IP และพอร์ตของ server
-server_ip = '10.63.5.92'  # แทนที่ด้วย IP ของเครื่อง server
+server_ip = '192.168.1.110'  # แทนที่ด้วย IP ของเครื่อง server
 server_port = 6000
 
 # สร้าง socket object

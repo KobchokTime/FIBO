@@ -19,7 +19,7 @@ import csv
 from datetime import datetime, timedelta
 import os
 
-def calculate_frequency(signal):
+def calculate_frequency(signal,name):
     # Calculate the total frequency
     signal_changes = 0
     previous_signal = None
@@ -67,7 +67,7 @@ def calculate_frequency(signal):
     return round(total_frequency, 2)
 
 class SSVEP(object):
-   def __init__(self, mywin= visual.Window([1920, 1080], fullscr=False, monitor='testMonitor',units='deg')):
+   def __init__(self, mywin= visual.Window([1500, 800], fullscr=False, monitor='testMonitor',units='deg')):
 
       self.mywin = mywin
       self.pattern1 = visual.GratingStim(win=self.mywin, name='pattern1',units='cm', 
@@ -171,14 +171,15 @@ class SSVEP(object):
             self.text.setAutoDraw(True)
             self.mywin.flip()
             while True:
-                if Trialclock.getTime() >= 1:
+                if Trialclock.getTime() >= 5:
                     break
             self.text.setAutoDraw(False)
             self.mywin.flip()
             i = 0
             ratio = 1
+            f = 20
             indices = np.arange(0,self.refresh_rate/ratio) 
-            fre_fix1 = self.frequency_cal(20,self.refresh_rate/ratio,indices)
+            fre_fix1 = self.frequency_cal(f,self.refresh_rate/ratio,indices)
 
             fre_fix = [fre_fix1]
             self.fixation.setAutoDraw(True)
@@ -203,14 +204,14 @@ class SSVEP(object):
             self.fixation.setAutoDraw(False)     
             self.pattern1.setAutoDraw(False)
             self.pattern2.setAutoDraw(False)
-            frequency1 = calculate_frequency(fre)
+            frequency1 = calculate_frequency(fre,f'{f}')
             print(f'Frequency1 = {frequency1}')
             print(f'END time {t_start.getTime()}')
             print(f'END trail {c + 1}')
 
             self.mywin.flip()
             while True:
-                if Trialclock.getTime() >= 1:
+                if Trialclock.getTime() >= 5:
                     break
             self.text_trial.setAutoDraw(False)
             self.fixation.setAutoDraw(False) 
