@@ -38,8 +38,8 @@ client.loop_start()
 #         time.sleep(5)  # Publish a message every 5 seconds
 # except KeyboardInterrupt:
 #     print("Exiting...")
-try:
-    while True:
+# try:
+#     while True:
         time.sleep(1)
         
 except KeyboardInterrupt:
