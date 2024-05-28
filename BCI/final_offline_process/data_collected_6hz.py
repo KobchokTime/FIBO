@@ -67,9 +67,10 @@ def calculate_frequency(signal,name):
     return round(total_frequency, 2)
 
 class SSVEP(object):
-   def __init__(self, mywin= visual.Window([1500, 800], fullscr=False, monitor='testMonitor',units='deg')):
+   def __init__(self, mywin= visual.Window([800, 800], fullscr=False, monitor='testMonitor',units='deg', pos=(0, 150))):
 
       self.mywin = mywin
+
       self.pattern1 = visual.GratingStim(win=self.mywin, name='pattern1',units='cm', 
                         tex=None, mask=None,
                         ori=0, pos=[0, 0], size=20, sf=1, phase=0.0,
@@ -177,7 +178,7 @@ class SSVEP(object):
             self.mywin.flip()
             i = 0
             ratio = 1
-            f = 20
+            f = 6
             indices = np.arange(0,self.refresh_rate/ratio) 
             fre_fix1 = self.frequency_cal(f,self.refresh_rate/ratio,indices)
 
