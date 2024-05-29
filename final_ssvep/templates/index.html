@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plot Graph</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div id="graph"></div>
+    <div id="message"></div> <!-- สร้างส่วนสำหรับแสดงข้อความ -->
+    <script>
+        function updatePlot() {
+            $.ajax({
+                url: '/update_plot',
+                success: function(data) {
+                    $('#message').text(data.message); // แสดงข้อความที่ได้รับจากเซิร์ฟเวอร์ในส่วนนี้
+                    var x = data.x;
+                    var y = data.y;
+                    var newData = [{
+                        x: x,
+                        y: y,
+                        type: 'scatter',
+                        name: 'Data' // เพิ่ม label ที่นี่
+                    }];
+                    Plotly.newPlot('graph', newData, {
+                        title: 'Plot Graph', // ชื่อกราฟ
+                        xaxis: {
+                            title: 'Time Axis' // ป้ายชื่อแกน X
+                        },
+                        yaxis: {
+                            title: 'Power Axis [kw]' // ป้ายชื่อแกน Y
+                        }
+                    });
+                }
+            });
+        }
+    
+        $(document).ready(function() {
+            updatePlot();
+            setInterval(updatePlot, 5000);
+        });
+    </script>    
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask Website with Plot</title>
+    <!-- Include necessary scripts -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <!-- CSS for button positioning -->
+    <style>
+        .button-container {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- First part: Flask buttons -->
+    <h1>Welcome to My Flask Website</h1>
+    <div class="button-container">
+        <button id="button1">On</button>
+        <button id="button2">Off</button>
+    </div>
+
+    <!-- Second part: Plotly graph -->
+    <div id="graph"></div>
+    <div id="message"></div>
+    
+    <!-- JavaScript -->
+    <script>
+        // Function to update the Plotly graph
+        function updatePlot() {
+            $.ajax({
+                url: '/update_plot',
+                success: function(data) {
+                    $('#message').text(data.message); // Display the message received from the server
+                    var x = data.x;
+                    var y = data.y;
+                    var newData = [{
+                        x: x,
+                        y: y,
+                        type: 'scatter',
+                        name: 'Data' // Add label here
+                    }];
+                    Plotly.newPlot('graph', newData, {
+                        title: 'Plot Graph', // Graph title
+                        xaxis: {
+                            title: 'Time Axis' // X-axis label
+                        },
+                        yaxis: {
+                            title: 'Power Axis [kw]' // Y-axis label
+                        }
+                    });
+                }
+            });
+        }
+    
+        $(document).ready(function() {
+            // Call updatePlot() initially and every 5 seconds
+            updatePlot();
+            setInterval(updatePlot, 5000);
+
+            // Button 1 click event
+            $("#button1").click(function(){
+                $.post("/button1", function(data, status){
+                    alert("Data: " + data + "\nStatus: " + status);
+                });
+            });
+
+            // Button 2 click event
+            $("#button2").click(function(){
+                $.post("/button2", function(data, status){
+                    alert("Data: " + data + "\nStatus: " + status);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

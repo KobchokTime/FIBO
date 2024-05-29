@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plot Graph</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <div id="graph"></div>
+    <script>
+        var x = { x };
+        var y = { y };
+        var data = [{
+            x: 10,
+            y: 10,
+            type: 'scatter'
+        }];
+        Plotly.newPlot('graph', data);
+    </script>
+</body>
+</html>
